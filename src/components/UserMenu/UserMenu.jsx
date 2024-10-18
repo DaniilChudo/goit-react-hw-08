@@ -8,8 +8,14 @@ const UserMenu = () => {
 
   return (
     <div>
-      <p>Welcome, {user.name}</p>
-      <button onClick={() => dispatch(logout())}>Logout</button>
+      {user ? ( // Перевірка наявності user
+        <>
+          <p>Welcome, {user.name}</p>
+          <button onClick={() => dispatch(logout())}>Logout</button>
+        </>
+      ) : (
+        <p>Loading...</p> // Можна показувати лоадер або повідомлення
+      )}
     </div>
   );
 };

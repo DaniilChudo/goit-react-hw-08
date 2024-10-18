@@ -5,7 +5,7 @@ import HomePage from "./pages/HomePage/HomePage";
 import RegistrationPage from "./pages/RegistrationPage/RegistrationPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import ContactsPage from "./pages/ContactsPage/ContactsPage";
-import Layout from "./components/AppBar/AppBar";
+import Layout from "./components/AppBar/AppBar"; // Переконайтеся, що цей компонент існує
 import { refreshUser } from "./redux/auth/operations";
 
 const App = () => {
