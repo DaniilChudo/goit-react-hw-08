@@ -1,34 +1,53 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchContacts, addContact, deleteContact } from "./operations";
+import { register, login, logout, refreshUser } from "./operations";
 
-const contactsSlice = createSlice({
-  name: "contacts",
+const authSlice = createSlice({
+  name: "auth",
   initialState: {
-    items: [],
-    isLoading: false,
-    error: null,
+    user: {
+      name: null,
+      email: null,
+    },
+    token: null,
+    isLoggedIn: false,
+    isRefreshing: false,
   },
-  reducers: {},
+  reducers: {
+    logoutUser(state) {
+      state.user = { name: null, email: null };
+      state.token = null;
+      state.isLoggedIn = false;
+    },
+  },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchContacts.pending, (state) => {
-        state.isLoading = true;
+      .addCase(register.fulfilled, (state, { payload }) => {
+        state.user = payload.user;
+        state.token = payload.token;
+        state.isLoggedIn = true;
       })
-      .addCase(fetchContacts.fulfilled, (state, { payload }) => {
-        state.isLoading = false;
-        state.items = payload;
+      .addCase(login.fulfilled, (state, { payload }) => {
+        state.user = payload.user;
+        state.token = payload.token;
+        state.isLoggedIn = true;
       })
-      .addCase(fetchContacts.rejected, (state, { payload }) => {
-        state.isLoading = false;
-        state.error = payload;
+      .addCase(logout.fulfilled, (state) => {
+        state.user = { name: null, email: null };
+        state.token = null;
+        state.isLoggedIn = false;
       })
-      .addCase(addContact.fulfilled, (state, { payload }) => {
-        state.items.push(payload);
+      .addCase(refreshUser.pending, (state) => {
+        state.isRefreshing = true;
       })
-      .addCase(deleteContact.fulfilled, (state, { payload }) => {
-        state.items = state.items.filter((contact) => contact.id !== payload);
+      .addCase(refreshUser.fulfilled, (state, { payload }) => {
+        state.user = payload;
+        state.isRefreshing = false;
+      })
+      .addCase(refreshUser.rejected, (state) => {
+        state.isRefreshing = false;
       });
   },
 });
 
-export default contactsSlice.reducer;
+export const { logoutUser } = authSlice.actions;
+export default authSlice.reducer;

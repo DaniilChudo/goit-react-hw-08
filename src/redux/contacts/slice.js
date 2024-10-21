@@ -1,3 +1,4 @@
+// contacts/slice.js
 import { createSlice } from "@reduxjs/toolkit";
 import { fetchContacts, addContact, deleteContact } from "./operations";
 
@@ -8,7 +9,11 @@ const contactsSlice = createSlice({
     isLoading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    clearContacts(state) {
+      state.items = [];
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchContacts.pending, (state) => {
@@ -31,4 +36,5 @@ const contactsSlice = createSlice({
   },
 });
 
+export const { clearContacts } = contactsSlice.actions; // Експортуємо дію
 export default contactsSlice.reducer;

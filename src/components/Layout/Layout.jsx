@@ -1,14 +1,15 @@
-import { AppBar } from "../AppBar/AppBar";
+// Layout.jsx
+import { AppBar } from "../AppBar/AppBar"; // Переконайтеся, що цей рядок правильний
+import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
-import css from "./Layout.module.css";
 
 export const Layout = () => {
   return (
-    <div className={css.container}>
+    <div style={{ maxWidth: 960, margin: "0 auto", padding: "0 16px" }}>
       <AppBar />
-      <main>
+      <Suspense fallback={null}>
         <Outlet />
-      </main>
+      </Suspense>
     </div>
   );
 };
