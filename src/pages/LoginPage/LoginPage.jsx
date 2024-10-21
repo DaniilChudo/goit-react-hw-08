@@ -1,31 +1,11 @@
-import { useDispatch } from "react-redux";
-import { login } from "../../redux/auth/operations";
+import DocumentTitle from "../../components/DocumentTitle";
+import { LoginForm } from "../../components/LoginForm/LoginForm";
 
-const LoginPage = () => {
-  const dispatch = useDispatch();
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const form = e.target;
-    const email = form.email.value;
-    const password = form.password.value;
-
-    dispatch(login({ email, password }));
-  };
-
+export default function LoginPage() {
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        Email:
-        <input type="email" name="email" required />
-      </label>
-      <label>
-        Password:
-        <input type="password" name="password" required />
-      </label>
-      <button type="submit">Login</button>
-    </form>
+    <div>
+      <DocumentTitle>Login</DocumentTitle>
+      <LoginForm />
+    </div>
   );
-};
-
-export default LoginPage;
+}

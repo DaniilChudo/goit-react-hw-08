@@ -1,48 +1,34 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { register, login, logout, refreshUser } from "./operations";
+import { fetchContacts, addContact, deleteContact } from "./operations";
 
-const initialState = {
-  user: {
-    name: null,
-    email: null,
+const contactsSlice = createSlice({
+  name: "contacts",
+  initialState: {
+    items: [],
+    isLoading: false,
+    error: null,
   },
-  token: null,
-  isLoggedIn: false,
-  isRefreshing: false,
-};
-
-const authSlice = createSlice({
-  name: "auth",
-  initialState,
+  reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(register.fulfilled, (state, action) => {
-        state.user = action.payload.user;
-        state.token = action.payload.token;
-        state.isLoggedIn = true;
+      .addCase(fetchContacts.pending, (state) => {
+        state.isLoading = true;
       })
-      .addCase(login.fulfilled, (state, action) => {
-        state.user = action.payload.user;
-        state.token = action.payload.token;
-        state.isLoggedIn = true;
+      .addCase(fetchContacts.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        state.items = payload;
       })
-      .addCase(logout.fulfilled, (state) => {
-        state.user = { name: null, email: null };
-        state.token = null;
-        state.isLoggedIn = false;
+      .addCase(fetchContacts.rejected, (state, { payload }) => {
+        state.isLoading = false;
+        state.error = payload;
       })
-      .addCase(refreshUser.pending, (state) => {
-        state.isRefreshing = true;
+      .addCase(addContact.fulfilled, (state, { payload }) => {
+        state.items.push(payload);
       })
-      .addCase(refreshUser.fulfilled, (state, action) => {
-        state.user = action.payload;
-        state.isLoggedIn = true;
-        state.isRefreshing = false;
-      })
-      .addCase(refreshUser.rejected, (state) => {
-        state.isRefreshing = false;
+      .addCase(deleteContact.fulfilled, (state, { payload }) => {
+        state.items = state.items.filter((contact) => contact.id !== payload);
       });
   },
 });
 
-export default authSlice.reducer;
+export default contactsSlice.reducer;

@@ -1,32 +1,30 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchContacts } from "../../redux/contacts/operations";
-import { selectFilteredContacts } from "../../redux/contacts/slice";
-import { selectNameFilter } from "../../redux/filters/selectors";
-import { changeFilter } from "../../redux/filters/slice";
+import { selectContacts } from "../../redux/contacts/selectors";
 import ContactForm from "../../components/ContactForm/ContactForm";
 import ContactList from "../../components/ContactList/ContactList";
-import SearchBox from "../../components/SearchBox/SearchBox";
+import { selectFilter } from "../../redux/filters/selectors";
 
 const ContactsPage = () => {
   const dispatch = useDispatch();
-  const contacts = useSelector(selectFilteredContacts);
-  const filter = useSelector(selectNameFilter);
+  const contacts = useSelector(selectContacts);
+  const filter = useSelector(selectFilter);
 
   useEffect(() => {
     dispatch(fetchContacts());
   }, [dispatch]);
 
+  const filteredContacts = contacts.filter((contact) =>
+    contact.name.toLowerCase().includes(filter.toLowerCase())
+  );
+
   return (
-    <div>
+    <>
       <h1>Contacts</h1>
       <ContactForm />
-      <SearchBox
-        value={filter}
-        onChange={(e) => dispatch(changeFilter(e.target.value))}
-      />
-      <ContactList contacts={contacts} />
-    </div>
+      <ContactList contacts={filteredContacts} />
+    </>
   );
 };
 
