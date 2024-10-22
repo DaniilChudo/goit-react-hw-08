@@ -1,28 +1,33 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage";
+import storage from "redux-persist/lib/storage"; // або sessionStorage
+import { combineReducers } from "redux"; // Використовуйте redux, а не redux-toolkit
 import authReducer from "./auth/slice";
 import contactsReducer from "./contacts/slice";
-import filtersReducer from "./filters/slice";
-import { combineReducers } from "redux";
 
 const persistConfig = {
-  key: "auth",
+  key: "root",
   storage,
+  whitelist: ["auth"], // Зберігайте лише auth в локальному сховищі
 };
 
 const rootReducer = combineReducers({
-  auth: persistReducer(persistConfig, authReducer),
+  auth: authReducer,
   contacts: contactsReducer,
-  filters: filtersReducer,
 });
 
-export const store = configureStore({
-  reducer: rootReducer,
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+const store = configureStore({
+  reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: false, // Ігнорування серіалізації
+      serializableCheck: {
+        ignoredActions: ["persist/PERSIST", "persist/REHYDRATE"],
+      },
     }),
 });
 
-export const persistor = persistStore(store);
+const persistor = persistStore(store);
+
+export { store, persistor };

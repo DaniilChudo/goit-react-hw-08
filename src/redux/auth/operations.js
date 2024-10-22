@@ -1,63 +1,18 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { clearContacts } from "../contacts/slice"; // Імпорт дії очищення контактів
+import { createAsyncThunk } from "@reduxjs/toolkit";
 
-axios.defaults.baseURL = "https://connections-api.goit.global/contacts";
+const API_URL = "https://connections-api.goit.global/users";
 
-// Операції авторизації
-export const register = createAsyncThunk("auth/register", async (userData) => {
-  const { data } = await axios.post("/users/signup", userData);
-  return data;
+export const register = createAsyncThunk("auth/register", async (user) => {
+  const response = await axios.post(`${API_URL}/signup`, user);
+  return response.data;
 });
 
-export const login = createAsyncThunk("auth/login", async (credentials) => {
-  const { data } = await axios.post("/users/login", credentials);
-  return data;
+export const logIn = createAsyncThunk("auth/logIn", async (credentials) => {
+  const response = await axios.post(`${API_URL}/login`, credentials);
+  return response.data;
 });
 
-export const logout = createAsyncThunk(
-  "auth/logout",
-  async (_, { dispatch }) => {
-    await axios.post("/users/logout");
-    dispatch(clearContacts()); // Виклик дії для очищення контактів
-  }
-);
-
-// Операції для контактів
-export const fetchContacts = createAsyncThunk("contacts/fetch", async () => {
-  const { data } = await axios.get("/contacts");
-  return data;
+export const logOut = createAsyncThunk("auth/logOut", async () => {
+  await axios.post(`${API_URL}/logout`);
 });
-
-export const addContact = createAsyncThunk("contacts/add", async (contact) => {
-  const { data } = await axios.post("/contacts", contact);
-  return data;
-});
-
-export const deleteContact = createAsyncThunk(
-  "contacts/delete",
-  async (contactId) => {
-    await axios.delete(`/contacts/${contactId}`);
-    return contactId;
-  }
-);
-
-export const refreshUser = createAsyncThunk(
-  "auth/refresh",
-  async (_, { getState }) => {
-    const {
-      auth: { token },
-    } = getState();
-
-    if (!token) {
-      throw new Error("No token found");
-    }
-
-    const { data } = await axios.get("/users/current", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return data;
-  }
-);

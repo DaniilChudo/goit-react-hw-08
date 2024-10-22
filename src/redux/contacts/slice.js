@@ -1,40 +1,42 @@
-// contacts/slice.js
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchContacts, addContact, deleteContact } from "./operations";
 
 const contactsSlice = createSlice({
   name: "contacts",
   initialState: {
     items: [],
-    isLoading: false,
-    error: null,
+    filter: "",
   },
   reducers: {
-    clearContacts(state) {
-      state.items = [];
+    addContact(state, action) {
+      state.items.push(action.payload);
     },
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchContacts.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(fetchContacts.fulfilled, (state, { payload }) => {
-        state.isLoading = false;
-        state.items = payload;
-      })
-      .addCase(fetchContacts.rejected, (state, { payload }) => {
-        state.isLoading = false;
-        state.error = payload;
-      })
-      .addCase(addContact.fulfilled, (state, { payload }) => {
-        state.items.push(payload);
-      })
-      .addCase(deleteContact.fulfilled, (state, { payload }) => {
-        state.items = state.items.filter((contact) => contact.id !== payload);
-      });
+    removeContact(state, action) {
+      state.items = state.items.filter(
+        (contact) => contact.id !== action.payload
+      );
+    },
+    setContacts(state, action) {
+      state.items = action.payload;
+    },
+    setFilter(state, action) {
+      state.filter = action.payload; // Експортуємо цю функцію
+    },
   },
 });
 
-export const { clearContacts } = contactsSlice.actions; // Експортуємо дію
+// Експортуємо редюсер за замовчуванням
 export default contactsSlice.reducer;
+
+// Експортуємо дії
+export const { addContact, removeContact, setContacts, setFilter } =
+  contactsSlice.actions;
+
+// Вибірки
+export const selectFilter = (state) => state.contacts.filter;
+export const selectVisibleContacts = (state) => {
+  const filter = selectFilter(state);
+  const contacts = state.contacts.items;
+  return contacts.filter((contact) =>
+    contact.name.toLowerCase().includes(filter.toLowerCase())
+  );
+};

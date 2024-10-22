@@ -1,53 +1,46 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { register, login, logout, refreshUser } from "./operations";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+
+export const register = createAsyncThunk("auth/register", async (userData) => {
+  const response = await axios.post(
+    "https://connections-api.goit.global/users/signup",
+    userData
+  );
+  return response.data; // Переконайтеся, що ви повертаєте правильний об'єкт
+});
+
+export const logIn = createAsyncThunk("auth/login", async (userData) => {
+  const response = await axios.post(
+    "https://connections-api.goit.global/users/login",
+    userData
+  );
+  return response.data; // Переконайтеся, що ви повертаєте правильний об'єкт
+});
 
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    user: {
-      name: null,
-      email: null,
-    },
-    token: null,
+    user: null,
     isLoggedIn: false,
-    isRefreshing: false,
   },
   reducers: {
-    logoutUser(state) {
-      state.user = { name: null, email: null };
-      state.token = null;
+    logout(state) {
+      state.user = null;
       state.isLoggedIn = false;
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(register.fulfilled, (state, { payload }) => {
-        state.user = payload.user;
-        state.token = payload.token;
+      .addCase(register.fulfilled, (state, action) => {
+        state.user = action.payload.user;
         state.isLoggedIn = true;
       })
-      .addCase(login.fulfilled, (state, { payload }) => {
-        state.user = payload.user;
-        state.token = payload.token;
+      .addCase(logIn.fulfilled, (state, action) => {
+        state.user = action.payload.user;
         state.isLoggedIn = true;
-      })
-      .addCase(logout.fulfilled, (state) => {
-        state.user = { name: null, email: null };
-        state.token = null;
-        state.isLoggedIn = false;
-      })
-      .addCase(refreshUser.pending, (state) => {
-        state.isRefreshing = true;
-      })
-      .addCase(refreshUser.fulfilled, (state, { payload }) => {
-        state.user = payload;
-        state.isRefreshing = false;
-      })
-      .addCase(refreshUser.rejected, (state) => {
-        state.isRefreshing = false;
       });
   },
 });
 
-export const { logoutUser } = authSlice.actions;
 export default authSlice.reducer;
+export const { logout } = authSlice.actions;

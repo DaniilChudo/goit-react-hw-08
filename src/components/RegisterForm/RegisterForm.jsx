@@ -1,36 +1,29 @@
-import { Formik, Form, Field } from "formik";
 import { useDispatch } from "react-redux";
-import { register } from "../../redux/auth/operations";
-import css from "./RegisterForm.module.css";
+import { register } from "../../redux/auth/slice"; // Переконайтеся, що шлях правильний
 
-export const RegisterForm = () => {
+const RegisterForm = () => {
   const dispatch = useDispatch();
 
-  const handleSubmit = (values, { resetForm }) => {
-    dispatch(register(values));
-    resetForm();
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const { name, email, password } = e.target.elements;
+    dispatch(
+      register({
+        name: name.value,
+        email: email.value,
+        password: password.value,
+      })
+    );
   };
 
   return (
-    <Formik
-      initialValues={{ name: "", email: "", password: "" }}
-      onSubmit={handleSubmit}
-    >
-      <Form className={css.form}>
-        <label>
-          Username
-          <Field type="text" name="name" required />
-        </label>
-        <label>
-          Email
-          <Field type="email" name="email" required />
-        </label>
-        <label>
-          Password
-          <Field type="password" name="password" required />
-        </label>
-        <button type="submit">Register</button>
-      </Form>
-    </Formik>
+    <form onSubmit={handleSubmit}>
+      <input type="text" name="name" required />
+      <input type="email" name="email" required />
+      <input type="password" name="password" required />
+      <button type="submit">Register</button>
+    </form>
   );
 };
+
+export default RegisterForm;

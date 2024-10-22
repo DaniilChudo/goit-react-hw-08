@@ -1,21 +1,18 @@
 import React from "react";
-import { HelmetProvider } from "react-helmet-async";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
-import { PersistGate } from "redux-persist/integration/react";
+import App from "./App";
 import { Provider } from "react-redux";
-import { App } from "./App";
-import { store, persistor } from "./redux/store";
+import { PersistGate } from "redux-persist/integration/react";
+import { BrowserRouter } from "react-router-dom";
+import { store, persistor } from "./redux/store"; // Зверніть увагу на імпорт
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
+      <PersistGate persistor={persistor}>
         <BrowserRouter>
-          <HelmetProvider>
-            <App />
-          </HelmetProvider>
+          <App />
         </BrowserRouter>
       </PersistGate>
     </Provider>

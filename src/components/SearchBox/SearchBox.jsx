@@ -1,8 +1,8 @@
 import { useDispatch } from "react-redux";
-import { setFilter } from "../../redux/filters/slice";
-import css from "./SearchBox.module.css";
+import { setFilter } from "../../redux/contacts/slice"; // Переконайтеся, що цей шлях вірний
+import styles from "./SearchBox.module.css";
 
-export const SearchBox = () => {
+export default function SearchBox() {
   const dispatch = useDispatch();
 
   const handleChange = (e) => {
@@ -12,9 +12,9 @@ export const SearchBox = () => {
   return (
     <input
       type="text"
-      placeholder="Search contacts..."
       onChange={handleChange}
-      className={css.searchBox}
+      placeholder="Search contacts"
+      className={styles.searchInput}
     />
   );
-};
+}
